@@ -42,7 +42,7 @@ Aggregated analytics endpoints:
    ```powershell
    pip install -r requirements.txt
    ```
-4. Create a `.env` file in the root configuration directory and add:
+4. Create a `.env` file directly inside the `Backend` directory containing:
    ```env
    PROJECT_NAME="Finance Data Processing API"
    SUPABASE_URL="https://your-project-url.supabase.co"
@@ -54,9 +54,21 @@ Aggregated analytics endpoints:
    uvicorn app.main:app --reload
    ```
 
-## 🧪 Testing
+## 🧪 Manual Testing via Swagger
 
 1. Navigate to the automatically generated Swagger UI at: `http://127.0.0.1:8000/docs`.
-2. Register a new user at `POST /auth/register` supplying a role (`ADMIN`, `ANALYST`, or `VIEWER`).
+2. Seed the database with a user manually (or log in with an existing `ADMIN` seeded user). Note: anonymous self-registration has been disabled for security. New users must be created via the protected `POST /users/` endpoint by an `ADMIN`.
 3. Obtain an access token at `POST /auth/login`.
 4. Click the **Authorize** lock button in the top right to paste the token and authenticate future API requests.
+
+## 🤖 Automated Testing
+
+A full `pytest` suite is included, using mocked database endpoints to ensure no network calls are needed for testing.
+
+```powershell
+# Run all tests
+pytest tests/ -v
+
+# Run tests with coverage
+pytest --cov=app tests/
+```
