@@ -19,6 +19,7 @@ This repository contains the backend for a Finance Data Processing and Access Co
   - `ADMIN`: Full access (create, read, update, delete).
   - `ANALYST`: Manage financial records (create, read, update).
   - `VIEWER`: Read-only access to records and dashboards.
+- **Rate Limiting**: Integrated `slowapi` to protect key endpoints (e.g. `5/minute` on login/user creation, `20/minute` on record creation) against spam and brute-force.
 
 ### 💰 Financial Records
 Endpoints to manage income/expense records with role constraints. Features include:

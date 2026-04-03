@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends, Query, HTTPException, Request
 from typing import Annotated, List, Optional
 
 from app.api.deps import require_role
@@ -8,16 +8,19 @@ from app.schemas.financial_record import (
     FinancialRecordUpdate,
 )
 from app.services.financial_service import financial_service
+from app.core.limiter import limiter
 
 router = APIRouter()
 
 
 @router.post("/", response_model=FinancialRecordResponse, status_code=201)
+@limiter.limit("20/minute")
 def create_record(
+    request: Request,
     record_in: FinancialRecordCreate,
     current_user: Annotated[dict, Depends(require_role(["ADMIN", "ANALYST"]))],
 ):
-    """Create a financial record. ADMIN and ANALYST only."""
+    """Create a financial record. ADMIN and ANALYST only. Max 20 per minute."""
     record = financial_service.create_record(current_user['id'], record_in)
     if not record:
         raise HTTPException(status_code=500, detail="Failed to create record")

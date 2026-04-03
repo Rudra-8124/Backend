@@ -1,19 +1,21 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 
 from app.services.user_service import user_service
 from app.core.security import verify_password, create_access_token
 from app.core.config import settings
+from app.core.limiter import limiter
 from datetime import timedelta
 
 router = APIRouter()
 
 
 @router.post("/login", response_model=dict)
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
+@limiter.limit("5/minute")
+def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
     """
-    Authenticate with email (username field) and password.
+    Authenticate with email (username field) and password. Max 5 requests per minute.
     Returns a JWT access token on success.
     """
     user = user_service.get_user_by_email(form_data.username)
