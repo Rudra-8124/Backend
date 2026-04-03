@@ -26,8 +26,8 @@ def _mock_supabase_records(records=None):
     if records is None:
         records = MOCK_RECORDS
     mock_sb = MagicMock()
-    mock_sb.table.return_value.select.return_value.execute.return_value.data = records
-    mock_sb.table.return_value.select.return_value.order.return_value.limit.return_value.execute.return_value.data = records
+    mock_sb.table.return_value.select.return_value.eq.return_value.execute.return_value.data = records
+    mock_sb.table.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute.return_value.data = records
     return patch("app.services.dashboard_service.supabase", mock_sb)
 
 

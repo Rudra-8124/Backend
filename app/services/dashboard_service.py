@@ -39,6 +39,7 @@ class DashboardService:
         response = (
             supabase.table(self.TABLE)
             .select("*")
+            .eq("is_deleted", False)
             .order("created_at", desc=True)
             .limit(limit)
             .execute()

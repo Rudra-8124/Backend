@@ -99,10 +99,11 @@ class TestGetRecords:
 class TestUpdateRecord:
     def test_analyst_can_update(self):
         with _mock_user(ANALYST_USER):
-            with patch("app.services.financial_service.fetch_data", return_value=[SAMPLE_RECORD]):
-                with patch("app.services.financial_service.update_data", return_value=SAMPLE_RECORD):
-                    resp = client.put(
-                        f"/financial-records/{SAMPLE_RECORD['id']}",
+            with patch("app.api.routes.financial_record.financial_service.get_record_by_id", return_value=SAMPLE_RECORD):
+                with patch("app.services.financial_service.fetch_data", return_value=[SAMPLE_RECORD]):
+                    with patch("app.api.routes.financial_record.financial_service.update_record", return_value=SAMPLE_RECORD):
+                        resp = client.put(
+                            f"/financial-records/{SAMPLE_RECORD['id']}",
                         json={"amount": 200.0},
                         headers=_auth(ANALYST_USER),
                     )
@@ -119,8 +120,9 @@ class TestUpdateRecord:
 
     def test_update_nonexistent_record(self):
         with _mock_user(ADMIN_USER):
-            with patch("app.services.financial_service.fetch_data", return_value=[]):
-                resp = client.put(
+            with patch("app.api.routes.financial_record.financial_service.get_record_by_id", return_value=None):
+                with patch("app.services.financial_service.fetch_data", return_value=[]):
+                    resp = client.put(
                     "/financial-records/nonexistent-id",
                     json={"amount": 100.0},
                     headers=_auth(ADMIN_USER),
@@ -130,10 +132,11 @@ class TestUpdateRecord:
     def test_partial_update_without_type(self):
         """PATCH with only 'amount' — type field should not trigger validator error."""
         with _mock_user(ADMIN_USER):
-            with patch("app.services.financial_service.fetch_data", return_value=[SAMPLE_RECORD]):
-                with patch("app.services.financial_service.update_data", return_value=SAMPLE_RECORD):
-                    resp = client.put(
-                        f"/financial-records/{SAMPLE_RECORD['id']}",
+            with patch("app.api.routes.financial_record.financial_service.get_record_by_id", return_value=SAMPLE_RECORD):
+                with patch("app.services.financial_service.fetch_data", return_value=[SAMPLE_RECORD]):
+                    with patch("app.api.routes.financial_record.financial_service.update_record", return_value=SAMPLE_RECORD):
+                        resp = client.put(
+                            f"/financial-records/{SAMPLE_RECORD['id']}",
                         json={"amount": 999.0},  # omitting 'type'
                         headers=_auth(ADMIN_USER),
                     )
@@ -143,10 +146,11 @@ class TestUpdateRecord:
 class TestDeleteRecord:
     def test_admin_can_delete(self):
         with _mock_user(ADMIN_USER):
-            with patch("app.services.financial_service.fetch_data", return_value=[SAMPLE_RECORD]):
-                with patch("app.services.financial_service.delete_data", return_value=SAMPLE_RECORD):
-                    resp = client.delete(
-                        f"/financial-records/{SAMPLE_RECORD['id']}",
+            with patch("app.api.routes.financial_record.financial_service.get_record_by_id", return_value=SAMPLE_RECORD):
+                with patch("app.services.financial_service.fetch_data", return_value=[SAMPLE_RECORD]):
+                    with patch("app.api.routes.financial_record.financial_service.delete_record", return_value=SAMPLE_RECORD):
+                        resp = client.delete(
+                            f"/financial-records/{SAMPLE_RECORD['id']}",
                         headers=_auth(ADMIN_USER),
                     )
         assert resp.status_code == 200
@@ -161,8 +165,9 @@ class TestDeleteRecord:
 
     def test_delete_nonexistent_returns_404(self):
         with _mock_user(ADMIN_USER):
-            with patch("app.services.financial_service.fetch_data", return_value=[]):
-                resp = client.delete(
+            with patch("app.api.routes.financial_record.financial_service.get_record_by_id", return_value=None):
+                with patch("app.services.financial_service.fetch_data", return_value=[]):
+                    resp = client.delete(
                     "/financial-records/nonexistent",
                     headers=_auth(ADMIN_USER),
                 )
