@@ -31,10 +31,14 @@ def read_records(
     category: Optional[str] = Query(None, description="Filter by category"),
     start_date: Optional[str] = Query(None, description="Start date filter (YYYY-MM-DD)"),
     end_date: Optional[str] = Query(None, description="End date filter (YYYY-MM-DD)"),
+    search: Optional[str] = Query(None, description="Search term in description or category"),
+    skip: int = Query(0, ge=0, description="Number of records to skip (for pagination)"),
+    limit: int = Query(100, ge=1, le=1000, description="Max number of records to return")
 ):
-    """Get all financial records with optional filters. All roles."""
+    """Get all financial records with optional filters, pagination, and text search. All roles."""
     records = financial_service.get_records(
-        type=type, category=category, start_date=start_date, end_date=end_date
+        type=type, category=category, start_date=start_date, end_date=end_date,
+        search=search, skip=skip, limit=limit
     )
     return records
 

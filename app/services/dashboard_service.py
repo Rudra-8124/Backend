@@ -5,7 +5,7 @@ class DashboardService:
     TABLE = "financial_records"
 
     def _get_all_records(self):
-        response = supabase.table(self.TABLE).select("*").execute()
+        response = supabase.table(self.TABLE).select("*").eq("is_deleted", False).execute()
         return response.data or []
 
     def get_summary(self):

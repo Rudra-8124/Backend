@@ -21,7 +21,14 @@ This repository contains the backend for a Finance Data Processing and Access Co
   - `VIEWER`: Read-only access to records and dashboards.
 
 ### 💰 Financial Records
-Endpoints to manage income/expense records with role constraints. Features include filters by date range, category, and type.
+Endpoints to manage income/expense records with role constraints. Features include:
+- Filters by date range, category, and type.
+- **Pagination**: Supports `limit` and `skip` query parameters on listing.
+- **Text Search**: Search through descriptions via case-insensitive `search` param.
+- **Soft Deletes**: Deleting a record flags it as `is_deleted = True` rather than hard-deleting it from the database entirely.
+
+> **Note on Database Setup:** This project expects an `is_deleted` BOOLEAN column on the `financial_records` table to support the Soft Delete feature safely without destroying data:
+> `ALTER TABLE financial_records ADD COLUMN is_deleted BOOLEAN DEFAULT false;`
 
 ### 📊 Dashboard
 Aggregated analytics endpoints:

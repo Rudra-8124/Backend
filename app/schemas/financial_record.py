@@ -10,6 +10,7 @@ class FinancialRecordBase(BaseModel):
     category: str
     date: str  # Expected format: YYYY-MM-DD
     description: Optional[str] = None
+    is_deleted: bool = False
 
     @field_validator('type')
     @classmethod
